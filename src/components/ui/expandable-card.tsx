@@ -1,159 +1,236 @@
-"use client";
+"use client"
 
-import * as React from "react";
-import { AnimatePresence, motion } from "motion/react";
-import { Plus, X } from "lucide-react";
-import { cn } from "@/lib/cn";
-import { useOutsideClick } from "@/hooks/use-outside-click";
+import * as React from "react"
+import { AnimatePresence, motion } from "motion/react"
+import { Plus, X } from "lucide-react"
+import { cn } from "@/lib/cn"
+import { useOutsideClick } from "@/hooks/use-outside-click"
 
 export type ExpandableCardProps = {
-  title: string;
-  description?: string;
-  src?: string;
-  children?: React.ReactNode;
-  className?: string;
-  classNameExpanded?: string;
-  ctaText?: string;
-};
+  title: string
+  src?: string
+  description?: string
+  children?: React.ReactNode
+  className?: string
+  classNameExpanded?: string
+  ctaText?: string
+}
 
 export function ExpandableCard({
   title,
-  description,
   src,
+  description,
   children,
   className,
   classNameExpanded,
-  ctaText = "Open"
+  ctaText = "+",
 }: ExpandableCardProps) {
-  const [open, setOpen] = React.useState(false);
-  const id = React.useId();
-  const modalRef = React.useRef<HTMLDivElement>(null);
-
-  useOutsideClick(modalRef, () => setOpen(false), open);
+  const [active, setActive] = React.useState(false)
+  const id = React.useId()
+  const ref = React.useRef<HTMLDivElement>(null)
 
   React.useEffect(() => {
-    const onKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setOpen(false);
-    };
-    if (open) window.addEventListener("keydown", onKeyDown);
-    return () => window.removeEventListener("keydown", onKeyDown);
-  }, [open]);
+    function onKeyDown(event: KeyboardEvent) {
+      if (event.key === "Escape") {
+        setActive(false)
+      }
+    }
 
-  const image = src ?? "https://picsum.photos/800/500";
+    if (active) {
+      document.body.style.overflow = "hidden"
+    } else {
+      document.body.style.overflow = "auto"
+    }
+
+    window.addEventListener("keydown", onKeyDown)
+    return () => {
+      window.removeEventListener("keydown", onKeyDown)
+      document.body.style.overflow = "auto"
+    }
+  }, [active])
+
+  // Handle clicks outside the modal
+  useOutsideClick(ref, () => setActive(false), active)
 
   return (
     <>
-      {/* Collapsed Card */}
-      <motion.button
-        layoutId={`card-${id}`}
+      {/* Card */}
+      <motion.div
+        layoutId={`card-${title}-${id}`}
+        onClick={() => setActive(true)}
         className={cn(
-          "group relative w-full overflow-hidden rounded-xl border border-black/10 bg-white text-left shadow-sm transition-transform duration-200 hover:-translate-y-0.5 hover:shadow md:rounded-2xl dark:bg-zinc-900 dark:border-white/10",
-          className
+          "flex flex-col h-96 rounded-3xl cursor-pointer relative overflow-hidden group",
+          "bg-neutral-900/50 border border-neutral-800/60 hover:border-neutral-700/80 hover:bg-neutral-900/70",
+          "transition-all duration-200 ease-out",
+          className,
         )}
-        onClick={() => setOpen(true)}
+        whileHover={{ scale: 1.005 }}
+        transition={{ type: "spring", stiffness: 400, damping: 30 }}
       >
-        {/* Image layer */}
-        <div className="relative aspect-[4/3] w-full overflow-hidden">
-          <motion.img
-            layoutId={`image-${id}`}
-            src={image}
-            alt={title}
-            className="h-full w-full object-cover"
-          />
-          {/* Bottom gradient */}
-          <div className="pointer-events-none absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-black/60 via-black/20 to-transparent"></div>
-        </div>
-
-        {/* Content */}
-        <div className="absolute inset-0 flex flex-col justify-end p-4">
-          <div className="flex items-center gap-2">
-            <h3 className="text-white text-lg font-semibold drop-shadow md:text-xl">
-              {title}
-            </h3>
-            <Plus className="h-4 w-4 shrink-0 text-white/90 transition-transform group-hover:rotate-90" />
-          </div>
-          {description ? (
-            <p className="mt-1 line-clamp-2 text-sm text-white/90 drop-shadow">
-              {description}
-            </p>
-          ) : null}
-          <span className="mt-3 inline-flex items-center text-xs font-medium text-white/90 opacity-90">
-            {ctaText}
-          </span>
-        </div>
-      </motion.button>
-
-      {/* Expanded Modal */}
-      <AnimatePresence>
-        {open && (
+        {/* Full background image */}
+        {src && (
           <motion.div
-            className="fixed inset-0 z-50"
+            layoutId={`image-${title}-${id}`}
+            className="absolute inset-0 z-0"
+          >
+            <img
+              width={300}
+              height={320}
+              src={src}
+              alt={title}
+              className="w-full h-full object-cover object-center bg-neutral-800"
+            />
+            {/* Gradient overlay for better text readability */}
+            <div className="absolute inset-0 bg-gradient-to-t from-neutral-900 via-neutral-900/60 to-transparent" />
+          </motion.div>
+        )}
+
+        {/* If no image, show gradient background */}
+        {!src && (
+          <motion.div
+            layoutId={`image-${title}-${id}`}
+            className="absolute inset-0 z-0 bg-gradient-to-br from-neutral-800 to-neutral-900"
+          />
+        )}
+
+        {/* Bottom bar with title and button */}
+        <div className="absolute bottom-0 left-0 right-0 p-4 flex items-center justify-between z-10 bg-gradient-to-t from-neutral-900 via-neutral-900/90 to-transparent">
+          <div className="flex-1 min-w-0">
+            <motion.h3
+              layoutId={`title-${title}-${id}`}
+              className="font-medium text-white text-xl leading-tight truncate"
+            >
+              {title}
+            </motion.h3>
+            {description && (
+              <motion.p
+                layoutId={`description-${description}-${id}`}
+                className="text-neutral-400 text-xs truncate"
+              >
+                {description}
+              </motion.p>
+            )}
+          </div>
+
+          <motion.button
+            layoutId={`button-${title}-${id}`}
+            className="w-8 h-8 rounded-full bg-neutral-700/80 hover:bg-neutral-600 text-white flex items-center justify-center text-lg font-light transition-colors ml-3 flex-shrink-0 backdrop-blur-sm"
+            whileHover={{
+              scale: 1.05,
+              rotate: 45,
+              backgroundColor: "rgb(82, 82, 82)",
+            }}
+            whileTap={{ scale: 0.95 }}
+            transition={{ type: "spring", stiffness: 500, damping: 30 }}
+          >
+            {ctaText}
+          </motion.button>
+        </div>
+      </motion.div>
+
+      {/* Backdrop */}
+      <AnimatePresence>
+        {active && (
+          <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-          >
-            {/* Backdrop */}
-            <motion.div
-              className="absolute inset-0 bg-black/60 backdrop-blur-[2px]"
+            className="fixed inset-0 bg-black/90 backdrop-blur-md z-50"
+            onClick={() => setActive(false)}
+          />
+        )}
+      </AnimatePresence>
+
+      {/* Expanded Modal - Linear Style */}
+      <AnimatePresence>
+        {active && (
+          <div className="fixed inset-0 grid place-items-center z-[100]">
+            <motion.button
+              key={`close-${title}-${id}`}
+              layout
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={() => setOpen(false)}
-            />
+              exit={{ opacity: 0, transition: { duration: 0.05 } }}
+              className="flex absolute top-4 right-4 lg:hidden items-center justify-center bg-white rounded-full h-6 w-6 z-[101]"
+              onClick={() => setActive(false)}
+            >
+              <X className="h-4 w-4" />
+            </motion.button>
 
-            {/* Modal container */}
-            <div className="absolute inset-0 grid place-items-center p-4 md:p-8">
-              <motion.div
-                ref={modalRef}
-                layoutId={`card-${id}`}
-                className={cn(
-                  "relative w-full max-w-3xl overflow-hidden rounded-xl border border-black/10 bg-white shadow-2xl md:rounded-2xl dark:bg-zinc-950 dark:border-white/10",
-                  classNameExpanded
-                )}
-              >
-                {/* Header image */}
-                <div className="relative h-56 w-full overflow-hidden md:h-72">
-                  <motion.img
-                    layoutId={`image-${id}`}
-                    src={image}
+            <motion.div
+              layoutId={`card-${title}-${id}`}
+              ref={ref}
+              style={{ backgroundColor: '#0f1011' }}
+              className={cn(
+                "w-full max-w-5xl h-full md:h-fit md:max-h-[90%]",
+                "flex flex-col border border-neutral-800/40",
+                "sm:rounded-3xl overflow-hidden",
+                classNameExpanded,
+              )}
+            >
+              {/* Image section */}
+              <motion.div layoutId={`image-${title}-${id}`}>
+                {src ? (
+                  <img
+                    width={200}
+                    height={200}
+                    src={src}
                     alt={title}
-                    className="h-full w-full object-cover"
+                    className="w-full h-[32rem] sm:rounded-tr-lg sm:rounded-tl-lg object-cover object-center bg-neutral-800"
                   />
-                  <div className="pointer-events-none absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-black/60 via-black/20 to-transparent"></div>
-                  {/* Close button */}
-                  <button
-                    onClick={() => setOpen(false)}
-                    className="absolute right-3 top-3 inline-flex h-9 w-9 items-center justify-center rounded-full bg-black/60 text-white shadow hover:bg-black/70 focus:outline-none"
-                    aria-label="Close"
-                  >
-                    <X className="h-4 w-4" />
-                  </button>
-                </div>
+                ) : (
+                  <div className="w-full h-[32rem] sm:rounded-tr-lg sm:rounded-tl-lg bg-gradient-to-br from-neutral-800 to-neutral-900" />
+                )}
+              </motion.div>
 
-                {/* Body */}
-                <div className="p-4 md:p-6">
-                  <h3 className="text-lg font-semibold md:text-xl">{title}</h3>
-                  {description ? (
-                    <p className="mt-1 text-sm text-zinc-600 dark:text-zinc-300">
-                      {description}
-                    </p>
-                  ) : null}
-                  <div className="mt-4 text-sm leading-relaxed text-zinc-700 dark:text-zinc-200">
-                    {children ?? (
-                      <p>
-                        Replace this content by passing <code>children</code> to{" "}
-                        <code>{"<ExpandableCard />"}</code>. The image and layout
-                        are shared between collapsed and expanded states using Motion v11{" "}
-                        <code>layoutId</code>.
-                      </p>
+              <div className="overflow-y-auto [scrollbar-width:none] [-ms-overflow-style:none] [-webkit-overflow-scrolling:touch]">
+                <div className="max-w-3xl mx-auto">
+                  {/* Header with title and close button */}
+                  <div className="flex justify-between items-start p-8">
+                  <div>
+                    <motion.h3
+                      layoutId={`title-${title}-${id}`}
+                      className="font-semibold text-white text-3xl md:text-4xl tracking-tight leading-tight"
+                    >
+                      {title}
+                    </motion.h3>
+                    {description && (
+                      <motion.p
+                        layoutId={`description-${description}-${id}`}
+                        className="text-neutral-400 text-base mt-2"
+                      >
+                        {description}
+                      </motion.p>
                     )}
                   </div>
+
+                  <motion.button
+                    layoutId={`button-${title}-${id}`}
+                    onClick={() => setActive(false)}
+                    className="w-8 h-8 rounded-full bg-neutral-700 hover:bg-neutral-600 text-white flex items-center justify-center text-lg font-light transition-colors flex-shrink-0 ml-4"
+                  >
+                    ×
+                  </motion.button>
                 </div>
-              </motion.div>
-            </div>
-          </motion.div>
+
+                  {/* Content */}
+                  <div className="px-8 pb-8">
+                    <motion.div
+                      layout
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                      className="text-neutral-300 text-base md:text-lg flex flex-col items-start gap-6"
+                    >
+                      {children}
+                    </motion.div>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          </div>
         )}
       </AnimatePresence>
     </>
-  );
+  )
 }

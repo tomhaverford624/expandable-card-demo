@@ -2,19 +2,33 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Optional: minimal light/dark background so the card looks nice */
-:root {
-  --bg: 255 255 255;
-  --fg: 15 15 15;
-}
-@media (prefers-color-scheme: dark) {
+@layer base {
   :root {
-    --bg: 15 15 15;
-    --fg: 245 245 245;
+    --background: 0 0% 100%;
+    --foreground: 0 0% 3.9%;
+    --muted: 0 0% 96.1%;
+    --muted-foreground: 0 0% 45.1%;
+    --border: 0 0% 89.8%;
+    --ring: 0 0% 83.1%;
   }
-}
-html, body {
-  min-height: 100%;
-  background: rgb(var(--bg));
-  color: rgb(var(--fg));
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --background: 0 0% 6%;
+      --foreground: 0 0% 98%;
+      --muted: 0 0% 14.9%;
+      --muted-foreground: 0 0% 63.9%;
+      --border: 0 0% 14.9%;
+      --ring: 0 0% 83.1%;
+    }
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    min-height: 100vh;
+  }
 }

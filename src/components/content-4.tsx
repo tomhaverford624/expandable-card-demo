@@ -1,85 +1,66 @@
-"use client";
+import { ChevronRight } from 'lucide-react'
+import Link from 'next/link'
 
-import Link from "next/link";
-import { ExpandableCard } from "@/components/ui/expandable-card";
+import { ExpandableCard } from "@/components/ui/expandable-card"
 
-type CardItem = {
-  title: string;
-  description: string;
-  src?: string;
-};
+type CardItem = { title?: string; description?: string; imageUrl?: string; content?: string }
 
 type Props = {
-  heading?: string;
-  paragraph?: string;
-  ctaLabel?: string;
-  ctaHref?: string;
-  cards?: CardItem[];
-};
+  heading?: string
+  paragraph?: string
+  ctaLabel?: string
+  ctaHref?: string
+  cards?: CardItem[]
+}
 
-export default function ContentSection({
-  heading,
-  paragraph,
-  ctaLabel,
-  ctaHref,
-  cards,
-}: Props) {
-  const items: CardItem[] =
-    cards && cards.length > 0
-      ? cards.slice(0, 3)
-      : [
-          {
-            title: "Actionable Signals",
-            description:
-              "Surface leading indicators with high signal-to-noise.",
-            src: "https://images.unsplash.com/photo-1520607162513-77705c0f0d4a?q=80&w=1600&auto=format&fit=crop",
-          },
-          {
-            title: "Structured Depth",
-            description:
-              "Layered analysis that stays consistent across updates.",
-            src: "https://images.unsplash.com/photo-1477337819265-12f546b3c052?q=80&w=1600&auto=format&fit=crop",
-          },
-          {
-            title: "Competitive Edge",
-            description: "Get to conviction faster than consensus.",
-            src: "https://images.unsplash.com/photo-1516245834210-c4c142787335?q=80&w=1600&auto=format&fit=crop",
-          },
-        ];
+export default function ContentSection({ heading, paragraph, ctaLabel, ctaHref, cards }: Props) {
+    const title = heading ?? 'Built to inform real capital decisions'
+    const body = paragraph ?? 'Alea Research is shaped by the discipline allocators demand. We focus on signals that matter, and insights that create an edge before consensus. The goal is to deliver research that informs real capital deployment.'
+    const label = ctaLabel ?? 'See the research'
+    const href = ctaHref ?? '/research'
 
-  return (
-    <section className="py-16 md:py-24">
-      <div className="mx-auto max-w-6xl px-4">
-        <div className="mb-10 flex flex-col items-start gap-4 md:mb-14 md:flex-row md:items-end md:justify-between">
-          <div>
-            <h2 className="text-2xl font-semibold md:text-3xl">
-              {heading ?? "Built to inform real capital decisions"}
-            </h2>
-            <p className="mt-2 max-w-2xl text-zinc-600 dark:text-zinc-300">
-              {paragraph ??
-                "We focus on signals that matter and insights that create an edge before consensus."}
-            </p>
-          </div>
-          <Link
-            href={ctaHref ?? "/research"}
-            className="inline-flex items-center rounded-md bg-zinc-900 px-4 py-2 text-sm font-medium text-white shadow hover:bg-zinc-800 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-200"
-          >
-            {ctaLabel ?? "See the research"}
-          </Link>
-        </div>
+    const items: CardItem[] = (cards && cards.length > 0) ? cards.slice(0,3) : [
+      { title: 'Purpose-built for product development', description: '' },
+      { title: 'Designed to move fast', description: '' },
+      { title: 'Crafted to perfection', description: '' },
+    ]
 
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-          {items.map((item) => (
-            <ExpandableCard
-              key={item.title}
-              title={item.title}
-              description={item.description}
-              src={item.src}
-              ctaText="Open"
-            />
-          ))}
-        </div>
-      </div>
-    </section>
-  );
+    return (
+        <section className="bg-transparent py-20 md:py-28">
+            <div className="mx-auto max-w-6xl px-6 md:px-8">
+                <div className="grid items-start gap-10 md:grid-cols-2 md:gap-20">
+                    <h2 className="text-balance text-[2.5rem] md:text-[3.5rem] leading-[1.1] tracking-[-0.015em] md:tracking-[-0.032em] font-semibold max-w-[20ch]">
+                      {title}
+                    </h2>
+                    <div className="max-w-prose text-muted-foreground md:pt-2">
+                        <p className="text-base/7">
+                          {body}{' '}
+                          <Link href={href} className="inline-flex items-center gap-1 font-medium text-foreground hover:opacity-80 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-ring focus:ring-offset-background rounded-sm">
+                            {label}
+                            <ChevronRight className="size-4" aria-hidden="true" />
+                          </Link>
+                        </p>
+                    </div>
+                </div>
+
+                <div className="mt-10 grid gap-6 md:grid-cols-3">
+                  {items.map((c, i) => (
+                    <ExpandableCard key={i} title={c.title || ''} description={c.description || ''} src={c.imageUrl || ''}>
+                      {c.content ? (
+                        <div className="space-y-4 text-left">
+                          {c.content.split(/\n\n+/).map((para, idx) => (
+                            <p key={idx}>{para}</p>
+                          ))}
+                        </div>
+                      ) : (
+                        <div className="space-y-4 text-left">
+                          <p>Expand to learn more about how we build for allocators.</p>
+                        </div>
+                      )}
+                    </ExpandableCard>
+                  ))}
+                </div>
+            </div>
+        </section>
+    )
 }
