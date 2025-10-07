@@ -26,7 +26,7 @@ pnpm dev
 yarn dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) and navigate to the **(marketing)** route.
+Open [http://localhost:3000](http://localhost:3000) to see the expandable cards demo.
 
 ---
 
@@ -56,10 +56,9 @@ Open [http://localhost:3000](http://localhost:3000) and navigate to the **(marke
 ```
 ├── src/
 │   ├── app/
-│   │   ├── (marketing)/
-│   │   │   └── page.tsx          # Demo page with 3 cards
+│   │   ├── page.tsx               # Demo page with 3 cards
 │   │   ├── layout.tsx             # Root layout with Inter font
-│   │   └── globals.css            # Tailwind + minimal styles
+│   │   └── globals.css            # Tailwind + theme variables
 │   ├── components/
 │   │   ├── ui/
 │   │   │   └── expandable-card.tsx  # ⭐ Main component
@@ -85,10 +84,10 @@ import { ExpandableCard } from "@/components/ui/expandable-card";
 export default function MyPage() {
   return (
     <ExpandableCard
-      title="Actionable Signals"
-      description="Surface leading indicators with high signal-to-noise."
+      title="Actionable Insights"
+      description="Surface what matters most"
       src="https://images.unsplash.com/photo-1520607162513-77705c0f0d4a?q=80&w=1600"
-      ctaText="Learn More"
+      ctaText="+"
     >
       <p>Your expanded content goes here.</p>
       <ul>
@@ -110,7 +109,7 @@ export default function MyPage() {
 | `children` | `ReactNode?` | Placeholder text | Content shown in expanded modal |
 | `className` | `string?` | `""` | Additional classes for collapsed card |
 | `classNameExpanded` | `string?` | `""` | Additional classes for modal container |
-| `ctaText` | `string?` | `"Open"` | Text for the CTA label |
+| `ctaText` | `string?` | `"+"` | Text for the CTA button |
 
 ---
 
@@ -197,7 +196,7 @@ Edit `src/components/ui/expandable-card.tsx` and modify the `motion` props:
 
 - **Path aliases**: `@/*` maps to `src/*` (configured in `tsconfig.json`)
 - **Client component**: `ExpandableCard` uses `"use client"` directive (required for Motion & hooks)
-- **Marketing route**: The demo page is at `(marketing)` route group (optional pattern)
+- **Dark design**: Uses neutral grays and sophisticated gradients for a modern, Linear-inspired aesthetic
 - **Motion v11**: Uses `motion/react` import path (not `framer-motion`)
 
 ---

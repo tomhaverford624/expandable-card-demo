@@ -14,15 +14,15 @@ type Props = {
 }
 
 export default function ContentSection({ heading, paragraph, ctaLabel, ctaHref, cards }: Props) {
-    const title = heading ?? 'Built to inform real capital decisions'
-    const body = paragraph ?? 'Alea Research is shaped by the discipline allocators demand. We focus on signals that matter, and insights that create an edge before consensus. The goal is to deliver research that informs real capital deployment.'
-    const label = ctaLabel ?? 'See the research'
-    const href = ctaHref ?? '/research'
+    const title = heading ?? 'Built for modern development teams'
+    const body = paragraph ?? 'Our platform is designed with the needs of fast-moving teams in mind. We focus on delivering tools that create clarity and enable better decision-making at every level.'
+    const label = ctaLabel ?? 'Learn more'
+    const href = ctaHref ?? '/learn-more'
 
     const items: CardItem[] = (cards && cards.length > 0) ? cards.slice(0,3) : [
-      { title: 'Purpose-built for product development', description: '' },
-      { title: 'Designed to move fast', description: '' },
-      { title: 'Crafted to perfection', description: '' },
+      { title: 'Actionable Insights', description: 'Surface what matters most' },
+      { title: 'Structured Data', description: 'Consistent and reliable' },
+      { title: 'Competitive Edge', description: 'Stay ahead of the curve' },
     ]
 
     return (
@@ -54,7 +54,7 @@ export default function ContentSection({ heading, paragraph, ctaLabel, ctaHref, 
                         </div>
                       ) : (
                         <div className="space-y-4 text-left">
-                          <p>Expand to learn more about how we build for allocators.</p>
+                          <p>Click any card to learn more about our platform capabilities and how we can help your team succeed.</p>
                         </div>
                       )}
                     </ExpandableCard>
