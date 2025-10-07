@@ -1,0 +1,20 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Optional: minimal light/dark background so the card looks nice */
+:root {
+  --bg: 255 255 255;
+  --fg: 15 15 15;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: 15 15 15;
+    --fg: 245 245 245;
+  }
+}
+html, body {
+  min-height: 100%;
+  background: rgb(var(--bg));
+  color: rgb(var(--fg));
+}
